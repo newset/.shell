@@ -1,4 +1,6 @@
- # alias
+#! /bin/bash
+
+# alias
 #
 alias src="source ~/.zshrc"
 alias cpwd='pwd|tr -d "\n"|pbcopy'
@@ -11,3 +13,5 @@ alias www='python -m http.server 8080'
 alias svim='sudo vim'
 
 
+alias python="/usr/local/bin/python3"
+alias pip="/usr/local/bin/pip3"
