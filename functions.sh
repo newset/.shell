@@ -50,7 +50,7 @@ extract () {
             *.tar)            tar xf $1         ;;
             *.tbz2)           tar xjf $1        ;;
             *.tgz)            tar xzf $1        ;;
-            *.zip)            unzip $1          ;;
+            *.zip)            unar $1          ;;
             *.Z)              uncompress $1     ;;
             *.7z)             7zr e $1          ;;
             *)                echo "'$1' cannot be extracted via extract()" ;;
@@ -138,4 +138,12 @@ install_weave_scope () {
 
 proxy_weave_scope () {
     kubectl port-forward -n weave "$(kubectl get -n weave pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}')" 4040
+}
+
+# git
+# -------------------------------
+
+# update git to https
+use_git_https () {
+    
 }
