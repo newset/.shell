@@ -147,3 +147,7 @@ proxy_weave_scope () {
 use_git_https () {
     
 }
+
+check_pr () {
+    curl -L http://github.com/$1/pull/$2.patch | git am
+}
