@@ -132,22 +132,36 @@ install_yarn () {
 # -------------------------------
 
 # install weave scope
-install_weave_scope () {
+ks_install_weave_scope () {
     kubectl apply -f "https://cloud.weave.works/k8s/scope.yaml?k8s-version=$(kubectl version | base64 | tr -d '\n')"
 }
 
-proxy_weave_scope () {
+ks_proxy_weave_scope () {
     kubectl port-forward -n weave "$(kubectl get -n weave pod --selector=weave-scope-component=app -o jsonpath='{.items..metadata.name}')" 4040
+}
+
+ks_get_po_image () {
+    INPUT=$(</dev/stdin);
+    
+    echo $(echo $INPUT | grep -i Image | sed -n '1p' | awk '{print $2}');
+}
+
+# k get secret $1 -o yaml 
+ks_get_secret_val () {
+    KEY=$1
+    INPUT=$(</dev/stdin);
+
+    echo $(echo $INPUT | grep $KEY | sed -n '1p' | awk '{print $2}' | base64 --decode);
 }
 
 # git
 # -------------------------------
 
 # update git to https
-use_git_https () {
+git_use_git_https () {
     
 }
 
-check_pr () {
+git_check_pr () {
     curl -L http://github.com/$1/pull/$2.patch | git am
 }
