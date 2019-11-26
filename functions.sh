@@ -113,17 +113,6 @@ psgrep() {
 
 # ----------------------------------
 
-## 批量重命名
-
-act () {
-
-}
-
-## 批量替换目录内制定内容
-## 编辑器已包含暂时不实现
-## replace src .scss .less
-
-
 install_yarn () {
     curl -o- -L https://yarnpkg.com/install.sh | bash
 }
@@ -154,6 +143,32 @@ ks_get_secret_val () {
     echo $(echo $INPUT | grep $KEY | sed -n '1p' | awk '{print $2}' | base64 --decode);
 }
 
+# 检查namespace 内所有资源
+ks_get_ns_content () {
+    NAMESPACE=$1
+    # see if any service is down 
+    kubectl get apiservice | grep False
+
+    kubectl api-resources --verbs=list --namespaced -o name | xargs -n 1 kubectl get -n $NAMESPACE
+}
+
+# 获取 bear token
+ks_get_bear_token () {
+    # ```
+    # UCP_URL=ucp.example.com
+    # USERNAME=admin
+    # PASSWORD=supersecretadminpassword
+    # curl -sk -d "{\"username\":\"$USERNAME\",\"password\":\"$PASSWORD\"}" https://${UCP_URL}/auth/login | jq -r .auth_token > auth-token
+    # ```
+
+}
+
+ks_clean_up () {
+    # --grace-period=0 --force
+
+    # remove evicted pods
+    kubectl get pods --all-namespaces -o json | jq '.items[] | select(.status.reason!=null) | select(.status.reason | contains("Evicted")) | "kubectl delete pods \(.metadata.name) -n \(.metadata.namespace)"' | xargs -n 1 bash -c
+}
 # git
 # -------------------------------
 
