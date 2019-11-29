@@ -16,3 +16,5 @@ export NVM_DIR="$HOME/.nvm"
 PATH=/usr/local/opt/python/libexec/bin:$PATH:/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin
 PATH=$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH
 export PATH=/usr/local/opt/gettext/bin:$PATH:$HOME/.rvm/bin:$GOROOT/bin:~/.fabric8/bin:~/Development/kube/istio-1.3.5/bin
+
+export TAOBAO_NPM_REGISTRY=https://registry.npm.taobao.org

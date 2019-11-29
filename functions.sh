@@ -118,6 +118,8 @@ install_yarn () {
 }
 
 # kubernetes
+# https://kubernetes.io/docs/reference/kubectl/cheatsheet/
+# https://unofficial-kubernetes.readthedocs.io/en/latest/user-guide/kubectl-cheatsheet/
 # -------------------------------
 
 # install weave scope
@@ -163,11 +165,23 @@ ks_get_bear_token () {
 
 }
 
+ks_clear_ns () {
+    NAMESPACE=$1
+    kubectl -n $NAMESPACE delete pod,svc --all
+}
+
 ks_clean_up () {
     # --grace-period=0 --force
 
     # remove evicted pods
     kubectl get pods --all-namespaces -o json | jq '.items[] | select(.status.reason!=null) | select(.status.reason | contains("Evicted")) | "kubectl delete pods \(.metadata.name) -n \(.metadata.namespace)"' | xargs -n 1 bash -c
+}
+
+# log pod with label selector
+ks_log_pod () {
+    NAMESPACE=${1:-default}
+    LABELS=${2:-""}
+    kubectl logs -n $NAMESPACE $(kubectl get pod -n $NAMESPACE -o jsonpath='{.items[0].metadata.name}') -f
 }
 # git
 # -------------------------------
@@ -179,4 +193,12 @@ git_use_git_https () {
 
 git_check_pr () {
     curl -L http://github.com/$1/pull/$2.patch | git am
+}
+
+
+# npm
+# -------------------------------
+
+npm_install_taobao () {
+    npm i --registry=https://registry.npm.taobao.org 
 }
