@@ -13,3 +13,4 @@
 read USERNAME REPO <<< $(echo newset/remax | awk -F / '{print $1, $2}' )
 
 echo user=$USERNAME repo=$REPO
+
