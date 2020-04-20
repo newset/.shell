@@ -232,6 +232,39 @@ ks_nginx_ingress (){
     kubectl exec -it $POD_NAME -n $POD_NAMESPACE -- /nginx-ingress-controller --version
 }
 
+ks_proxy_svc () {
+    svc=$1
+    port=$2
+    
+    kubectl port-forward service/${svc} 9000:$port
+}
+
+ks_svc_curl () {
+    svc=$1
+    port=$2
+    url=$3
+
+    ks_proxy_svc $svc $port
+
+    curl --noproxy http://localhost:$port/$api
+}
+
+ks_labeled () {
+    kubectl get pod --selector=k8s-app=$1 -o jsonpath='{.items[*].metadata.name}'
+}
+
+ks_log_label_pod () {
+    pod=`ks_name_by_label $1`
+    echo "logging ${pod}"
+    kubectl logs $pod -f
+}
+
+## 获取 失败容器日志
+ks_fail_log () {
+    pod=$1
+    kubectl get pod $pod -o go-template="{{range .status.containerStatuses}}{{.lastState.terminated.message}}{{end}}"
+}
+
 # git
 # -------------------------------
 
@@ -250,4 +283,26 @@ git_check_pr () {
 
 npm_install_taobao () {
     npm i --registry=https://registry.npm.taobao.org 
+}
+
+# docker
+# -------------------------------
+log_docker () {
+    pred='process matches ".*(ocker|vpnkit).*"
+  || (process in {"taskgated-helper", "launchservicesd", "kernel"} && eventMessage contains[c] "docker")'
+    /usr/bin/log show --debug --info --style syslog --last 1h --predicate "$pred" 
+}
+
+docker_rm () {
+    # todo: require grep 参数
+    docker rm $(docker ps -a | grep $1 | awk '{print $1}')
+}
+
+docker_rmi () {
+    # todo: require grep 参数
+    docker rmi $(docker images | grep $1 | awk '{print $3}')
+}
+
+docker_run () {
+    docker run -it --rm $@
 }
